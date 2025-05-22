@@ -1,0 +1,16 @@
+.button {
+  border-radius: 10px;
+  height: 20px;
+  border: none;
+  background-color: rgb(74, 74, 251);
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.button:hover,
+.button:focus {
+  color: yellow;
+  background-color: blue;
+}
