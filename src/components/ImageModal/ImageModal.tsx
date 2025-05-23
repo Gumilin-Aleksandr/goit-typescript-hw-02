@@ -1,8 +1,13 @@
 import ReactModal from "react-modal";
+import { ImageModalProps } from "./ImageModal.types";
 
 ReactModal.setAppElement("#root");
 
-const ImageModal = ({ data, closeModal, isOpen }) => {
+const ImageModal: React.FC<ImageModalProps> = ({
+  data,
+  closeModal,
+  isOpen,
+}) => {
   if (!data) return null;
 
   const {

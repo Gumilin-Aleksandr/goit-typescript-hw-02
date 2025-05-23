@@ -1,6 +1,7 @@
 import css from "./ImageCard.module.css";
+import { ImageCardProps } from "./ImageCard.types";
 
-const ImageCard = ({
+const ImageCard: React.FC<ImageCardProps> = ({
   data: {
     alt_description,
     urls: { small },

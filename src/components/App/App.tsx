@@ -8,27 +8,30 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import ImageModal from "../ImageModal/ImageModal";
 import React from "react";
 import { getImages } from "../../api/api-images";
+import { Image } from "./App.types";
 
 export default function App() {
-  const [images, setImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showBtn, setShowBtn] = useState(false);
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState<Image[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showBtn, setShowBtn] = useState<boolean>(false);
+  const [modalIsOpen, setIsOpen] = React.useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+
   useEffect(() => {
     if (searchQuery === "") {
       return;
     }
+
     async function fetchImages() {
       try {
         setIsLoading(true);
         setIsError(false);
         const data = await getImages(searchQuery, page);
         setImages((prevState) => [...prevState, ...data.results]);
-        setShowBtn(data.total_pages && data.total_pages !== page);
+        setShowBtn(page < data.total_pages);
       } catch (error) {
         setIsError(true);
       } finally {
@@ -38,26 +41,26 @@ export default function App() {
     fetchImages();
   }, [page, searchQuery]);
 
-  const handleSearch = async (topic) => {
+  const handleSearch = async (topic: string) => {
     setSearchQuery(topic);
     setPage(1);
     setImages([]);
   };
-  const handleLoadMore = async () => {
+  const handleLoadMore = (): void => {
     setPage(page + 1);
   };
 
-  function openModal(image) {
+  function openModal(image: Image): void {
     setIsOpen(true);
     setSelectedImage(image);
   }
 
-  function closeModal() {
+  function closeModal(): void {
     setIsOpen(false);
   }
   return (
     <div className={css.container}>
-      <SearchBar images={images} onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} />
       <ImageGallery items={images} openModal={openModal} />
       {isLoading && <Loader />}
       {showBtn && !isLoading && <LoadMoreBtn onClick={handleLoadMore} />}
@@ -68,6 +71,9 @@ export default function App() {
           closeModal={closeModal}
           data={selectedImage}
         />
+      )}
+      {!isLoading && images.length === 0 && !isError && (
+        <p className={css.empty}>No images.</p>
       )}
     </div>
   );
